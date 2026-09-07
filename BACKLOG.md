@@ -168,9 +168,9 @@
   - Cancellation handler:
     - If user cancels, leave data unchanged.
 - **Acceptance Criteria**:
-  - [ ] Clicking "Delete" triggers a confirmation prompt referencing the specific company name.
-  - [ ] Confirming deletion removes the entry from `localStorage` and the UI table.
-  - [ ] Canceling deletion keeps the record intact in storage and UI.
+  - [x] Clicking "Delete" triggers a confirmation prompt referencing the specific company name.
+  - [x] Confirming deletion removes the entry from `localStorage` and the UI table.
+  - [x] Canceling deletion keeps the record intact in storage and UI.
 
 ---
 
@@ -192,10 +192,10 @@
     - Filtered results passed directly to table component.
     - Display "No opportunities match your current filters" when 0 rows match.
 - **Acceptance Criteria**:
-  - [ ] Typing in search bar instantly filters rows matching Company Name or Roles.
-  - [ ] Selecting an Eligibility option filters exclusively for matching rows.
-  - [ ] Combining multiple filters applies all conditions simultaneously.
-  - [ ] "Reset Filters" restores table to show all records for the active tab.
+  - [x] Typing in search bar instantly filters rows matching Company Name or Roles.
+  - [x] Selecting an Eligibility option filters exclusively for matching rows.
+  - [x] Combining multiple filters applies all conditions simultaneously.
+  - [x] "Reset Filters" restores table to show all records for the active tab.
 
 ---
 

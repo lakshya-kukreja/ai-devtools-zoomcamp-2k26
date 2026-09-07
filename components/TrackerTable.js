@@ -141,6 +141,8 @@ export default function TrackerTable({
   onEdit,
   onDelete,
   isLoaded = true,
+  isFiltered = false,
+  onResetFilters,
 }) {
   const isInternships = tab === 'internships';
   // Total columns:
@@ -180,16 +182,31 @@ export default function TrackerTable({
               <td colSpan={totalColumns}>
                 <div className="empty-state">
                   <div className="empty-state-icon" aria-hidden="true">
-                    {isInternships ? '🎓' : '💼'}
+                    {isFiltered ? '🔍' : isInternships ? '🎓' : '💼'}
                   </div>
                   <h3 className="empty-state-title">
-                    No {isInternships ? 'internship' : 'placement'} opportunities tracked yet
+                    {isFiltered
+                      ? 'No opportunities match your current filters'
+                      : `No ${isInternships ? 'internship' : 'placement'} opportunities tracked yet`}
                   </h3>
                   <p className="empty-state-subtitle">
-                    {isLoaded
-                      ? `Use the "Add Opportunity" action to track your first ${isInternships ? 'internship' : 'placement'} opportunity.`
-                      : 'Loading tracked opportunities...'}
+                    {!isLoaded
+                      ? 'Loading tracked opportunities...'
+                      : isFiltered
+                      ? 'Try adjusting your keyword search or filter criteria, or click "Reset Filters" to view all records.'
+                      : `Use the "Add Opportunity" action to track your first ${isInternships ? 'internship' : 'placement'} opportunity.`}
                   </p>
+                  {isFiltered && onResetFilters && (
+                    <button
+                      type="button"
+                      id="btn-empty-reset-filters"
+                      className="btn btn-secondary"
+                      style={{ marginTop: '0.85rem' }}
+                      onClick={onResetFilters}
+                    >
+                      Reset Filters
+                    </button>
+                  )}
                 </div>
               </td>
             </tr>

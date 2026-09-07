@@ -1,15 +1,79 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTrackerStorage } from '../hooks/useTrackerStorage';
 import TrackerTable from '../components/TrackerTable';
 import OpportunityModal from '../components/OpportunityModal';
+import FilterBar from '../components/FilterBar';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('internships');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const { items, isLoaded, addItem, updateItem } = useTrackerStorage(activeTab);
+  const { items, isLoaded, addItem, updateItem, deleteItem } = useTrackerStorage(activeTab);
+
+  // Search & Filter State (TASK-07)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [eligibilityFilter, setEligibilityFilter] = useState('All');
+  const [modeFilter, setModeFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [chanceFilter, setChanceFilter] = useState('All');
+
+  // Multi-criteria filter logic combining search and dropdown filters with logical AND
+  const filteredItems = useMemo(() => {
+    if (!items || items.length === 0) return [];
+
+    const query = searchQuery.trim().toLowerCase();
+
+    return items.filter((item) => {
+      // 1. Keyword search (case-insensitive match on companyName and roles)
+      if (query) {
+        const company = (item.companyName || '').toLowerCase();
+        const roles = (item.roles || '').toLowerCase();
+        if (!company.includes(query) && !roles.includes(query)) {
+          return false;
+        }
+      }
+
+      // 2. MSc Physics Eligibility
+      if (eligibilityFilter !== 'All' && item.mscPhysicsEligibility !== eligibilityFilter) {
+        return false;
+      }
+
+      // 3. Drive Mode
+      if (modeFilter !== 'All' && item.mode !== modeFilter) {
+        return false;
+      }
+
+      // 4. Application Status
+      if (statusFilter !== 'All' && item.status !== statusFilter) {
+        return false;
+      }
+
+      // 5. Recruitment Chance
+      if (chanceFilter !== 'All' && item.chance !== chanceFilter) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [items, searchQuery, eligibilityFilter, modeFilter, statusFilter, chanceFilter]);
+
+  const hasActiveFilters = Boolean(
+    searchQuery.trim() ||
+    eligibilityFilter !== 'All' ||
+    modeFilter !== 'All' ||
+    statusFilter !== 'All' ||
+    chanceFilter !== 'All'
+  );
+
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setEligibilityFilter('All');
+    setModeFilter('All');
+    setStatusFilter('All');
+    setChanceFilter('All');
+  };
 
   const handleOpenAddModal = () => {
     setEditingItem(null);
@@ -32,9 +96,19 @@ export default function Home() {
     setEditingItem(null);
   };
 
-  // Placeholder delete handler (to be implemented in future tasks)
+  // Delete opportunity with confirmation (TASK-06)
   const handleDelete = (item) => {
-    console.log('Delete action triggered for', item);
+    if (!item || !item.id) return;
+    const companyName = item.companyName ? item.companyName.trim() : 'this opportunity';
+    if (typeof window !== 'undefined') {
+      const confirmed = window.confirm(`Delete ${companyName}? This action cannot be undone.`);
+      if (confirmed) {
+        deleteItem(item.id);
+        if (editingItem && editingItem.id === item.id) {
+          handleCloseModal();
+        }
+      }
+    }
   };
 
   return (
@@ -139,25 +213,23 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Search & Quick Filters Bar Placeholder (TASK-07) */}
-        <section className="placeholder-section" aria-labelledby="filter-section-title">
-          <div className="placeholder-header">
-            <h2 id="filter-section-title" className="placeholder-title">
-              🔍 Search & Quick Filters
-            </h2>
-            <span className="placeholder-tag">TASK-07 Shell</span>
-          </div>
-          <p className="placeholder-desc">
-            Filter opportunities by keyword search and multi-criteria selectors.
-          </p>
-          <div className="filters-placeholder-bar">
-            <div className="fake-input">Search company name or role...</div>
-            <div className="fake-select">Eligibility: All</div>
-            <div className="fake-select">Mode: All</div>
-            <div className="fake-select">Status: All</div>
-            <div className="fake-select">Chance: All</div>
-          </div>
-        </section>
+        {/* Search & Quick Filters Bar (TASK-07) */}
+        <FilterBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          eligibilityFilter={eligibilityFilter}
+          onEligibilityChange={setEligibilityFilter}
+          modeFilter={modeFilter}
+          onModeChange={setModeFilter}
+          statusFilter={statusFilter}
+          onStatusChange={setStatusFilter}
+          chanceFilter={chanceFilter}
+          onChanceChange={setChanceFilter}
+          onReset={handleResetFilters}
+          hasActiveFilters={hasActiveFilters}
+          filteredCount={filteredItems.length}
+          totalCount={items.length}
+        />
 
         {/* Spreadsheet Table Component (TASK-03 & TASK-04) */}
         <section className="card-section" aria-labelledby="spreadsheet-section-title">
@@ -170,6 +242,11 @@ export default function Home() {
                 {activeTab === 'internships'
                   ? 'Tracking Stipend, PPO conversion terms, and MSc Physics eligibility'
                   : 'Tracking CTC packages and MSc Physics eligibility'}
+                {hasActiveFilters && (
+                  <span style={{ marginLeft: '0.5rem', color: '#a5b4fc', fontWeight: 500 }}>
+                    • Showing {filteredItems.length} of {items.length} records
+                  </span>
+                )}
               </p>
             </div>
             <button
@@ -183,8 +260,10 @@ export default function Home() {
           </div>
           <TrackerTable
             tab={activeTab}
-            items={items}
+            items={filteredItems}
             isLoaded={isLoaded}
+            isFiltered={hasActiveFilters}
+            onResetFilters={handleResetFilters}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />

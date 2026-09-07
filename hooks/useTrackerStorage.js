@@ -143,6 +143,7 @@ export function useTrackerStorage(tab = 'internships') {
   // Delete an opportunity by ID
   const deleteItem = useCallback(
     (id) => {
+      if (!id) return;
       const updated = items.filter((item) => item.id !== id);
       saveItems(tab, updated);
       setItemsState(updated);
