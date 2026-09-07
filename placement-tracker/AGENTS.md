@@ -39,11 +39,11 @@ A lightweight, single-page, spreadsheet-style personal web application built to 
 
 ## 4. Role of SPEC.md & BACKLOG.md
 
-- **[SPEC.md](file:///home/asus/ai-devtools-zoomcamp/SPEC.md)** is the **single source of truth for product requirements**:
+- **[SPEC.md](file:///home/asus/ai-devtools-zoomcamp/placement-tracker/SPEC.md)** is the **single source of truth for product requirements**:
   - Defines data schemas, field types, and allowed values (Section 4).
   - Specifies UI rules, badge color codes, and table behaviors (Section 6).
   - Explicitly states what is out of scope for V1 (Section 7).
-- **[BACKLOG.md](file:///home/asus/ai-devtools-zoomcamp/BACKLOG.md)** defines the **planned implementation tasks**:
+- **[BACKLOG.md](file:///home/asus/ai-devtools-zoomcamp/placement-tracker/BACKLOG.md)** defines the **planned implementation tasks**:
   - Breaks implementation into sequential, discrete tasks (`TASK-01` through `TASK-09`).
   - Sets exact deliverables and acceptance criteria for each milestone.
 - **Conflict Resolution**: If a question on functionality arises, `SPEC.md` governs behavior and `BACKLOG.md` governs task sequencing. Never invent requirements not found in these documents.

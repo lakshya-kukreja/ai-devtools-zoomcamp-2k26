@@ -1,6 +1,6 @@
 # Implementation Backlog: Placement & Internship Tracker (V1)
 
-**Specification Reference**: [SPEC.md](file:///home/asus/ai-devtools-zoomcamp/SPEC.md)  
+**Specification Reference**: [SPEC.md](file:///home/asus/ai-devtools-zoomcamp/placement-tracker/SPEC.md)  
 **Architecture & Tech Stack**: 
 - **Framework**: Next.js (App Router)
 - **Language**: JavaScript (JSX, no TypeScript)
