@@ -362,6 +362,204 @@ html, body {
   font-family: var(--font-mono);
 }
 
+/* ==========================================================================
+   Dynamic Metrics Summary Bar (TASK-08 & SPEC.md Section 5.3)
+   ========================================================================== */
+.metrics-bar-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem 1.35rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.metrics-bar-section:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.metrics-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.metrics-bar-titles {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.metrics-bar-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  letter-spacing: -0.01em;
+}
+
+.metrics-title-icon {
+  font-size: 1.05rem;
+}
+
+.metrics-view-indicator {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.metrics-bar-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.85rem;
+}
+
+.metric-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.4rem;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.metric-card-total {
+  border-top: 3px solid #6366f1;
+}
+
+.metric-card-total:hover {
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.metric-card-eligible {
+  border-top: 3px solid var(--eligibility-eligible-color);
+}
+
+.metric-card-eligible:hover {
+  border-color: rgba(16, 185, 129, 0.6);
+}
+
+.metric-card-chance {
+  border-top: 3px solid var(--chance-green);
+}
+
+.metric-card-chance:hover {
+  border-color: rgba(16, 185, 129, 0.6);
+}
+
+.metric-card-active {
+  border-top: 3px solid #38bdf8;
+}
+
+.metric-card-active:hover {
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+.metric-card-offers {
+  border-top: 3px solid #fbbf24;
+}
+
+.metric-card-offers:hover {
+  border-color: rgba(251, 191, 36, 0.6);
+}
+
+.metric-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.metric-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  line-height: 1.25;
+}
+
+.metric-icon {
+  font-size: 1.05rem;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+.metric-value-wrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0.2rem 0;
+}
+
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.metric-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(51, 65, 85, 0.35);
+  padding-top: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.metric-subtext {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+@media (max-width: 1080px) {
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 440px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 /* Search & Quick Filters Component (TASK-07) */
 .filter-bar-card {
   background: var(--bg-surface);

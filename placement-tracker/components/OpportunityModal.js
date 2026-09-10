@@ -139,13 +139,19 @@ export default function OpportunityModal({
       payload.ctc = formData.ctc.trim();
     }
 
-    if (isEditing) {
-      onUpdate?.(initialData.id, payload);
-    } else {
-      onAdd?.(payload);
+    try {
+      if (isEditing) {
+        onUpdate?.(initialData.id, payload);
+      } else {
+        onAdd?.(payload);
+      }
+      onClose();
+    } catch (err) {
+      setErrors((prev) => ({
+        ...prev,
+        form: err.message || 'Failed to save opportunity. Please check all inputs.',
+      }));
     }
-
-    onClose();
   };
 
   const handleBackdropClick = (e) => {
@@ -191,6 +197,23 @@ export default function OpportunityModal({
 
         <form onSubmit={handleSubmit} className="modal-form" noValidate>
           <div className="modal-body">
+            {errors.form && (
+              <div
+                style={{
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  color: '#fca5a5',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: 'var(--radius-sm, 6px)',
+                  fontSize: '0.825rem',
+                  marginBottom: '1rem',
+                }}
+                role="alert"
+              >
+                ⚠️ {errors.form}
+              </div>
+            )}
+
             {/* Company Name (Required) */}
             <div className="form-group">
               <label htmlFor="modal-companyName" className="form-label">

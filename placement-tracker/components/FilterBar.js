@@ -36,6 +36,7 @@ export default function FilterBar({
   return (
     <section className="filter-bar-card" aria-label="Search and Quick Filters">
       <div className="filter-bar-header">
+        
         <div className="filter-bar-title-group">
           <h2 className="filter-bar-title">
             <span className="filter-title-icon" aria-hidden="true">🔍</span>

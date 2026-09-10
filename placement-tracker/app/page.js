@@ -5,6 +5,7 @@ import { useTrackerStorage } from '../hooks/useTrackerStorage';
 import TrackerTable from '../components/TrackerTable';
 import OpportunityModal from '../components/OpportunityModal';
 import FilterBar from '../components/FilterBar';
+import MetricsBar from '../components/MetricsBar';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('internships');
@@ -73,6 +74,13 @@ export default function Home() {
     setModeFilter('All');
     setStatusFilter('All');
     setChanceFilter('All');
+  };
+
+  const handleAddOpportunity = (newRecord) => {
+    addItem(newRecord);
+    if (hasActiveFilters) {
+      handleResetFilters();
+    }
   };
 
   const handleOpenAddModal = () => {
@@ -177,41 +185,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Dynamic Metrics Summary Bar Placeholder (TASK-08) */}
-        <section className="placeholder-section" aria-labelledby="metrics-summary-title">
-          <div className="placeholder-header">
-            <h2 id="metrics-summary-title" className="placeholder-title">
-              📊 Dynamic Metrics Summary Bar
-            </h2>
-            <span className="placeholder-tag">TASK-08 Shell</span>
-          </div>
-          <p className="placeholder-desc">
-            Displays real-time pipeline metrics dynamically computed for the active{' '}
-            <strong>{activeTab === 'internships' ? 'Internships' : 'Placements'}</strong> view.
-          </p>
-          <div className="metrics-placeholder-grid">
-            <div className="metric-placeholder-card">
-              <span className="metric-placeholder-label">Total Tracked</span>
-              <span className="metric-placeholder-val">0</span>
-            </div>
-            <div className="metric-placeholder-card">
-              <span className="metric-placeholder-label">MSc Physics Eligible</span>
-              <span className="metric-placeholder-val">0</span>
-            </div>
-            <div className="metric-placeholder-card">
-              <span className="metric-placeholder-label">High Chance (Green)</span>
-              <span className="metric-placeholder-val">0</span>
-            </div>
-            <div className="metric-placeholder-card">
-              <span className="metric-placeholder-label">Active Applications</span>
-              <span className="metric-placeholder-val">0</span>
-            </div>
-            <div className="metric-placeholder-card">
-              <span className="metric-placeholder-label">Offers Received</span>
-              <span className="metric-placeholder-val">0</span>
-            </div>
-          </div>
-        </section>
+        {/* Dynamic Metrics Summary Bar (TASK-08) */}
+        <MetricsBar items={items} tab={activeTab} />
 
         {/* Search & Quick Filters Bar (TASK-07) */}
         <FilterBar
@@ -325,9 +300,7 @@ export default function Home() {
         tab={activeTab}
         initialData={editingItem}
         onClose={handleCloseModal}
-        onAdd={(newRecord) => {
-          addItem(newRecord);
-        }}
+        onAdd={handleAddOpportunity}
         onUpdate={(id, updatedFields) => {
           updateItem(id, updatedFields);
         }}

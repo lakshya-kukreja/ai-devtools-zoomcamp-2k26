@@ -88,12 +88,16 @@ export function useTrackerStorage(tab = 'internships') {
         throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
       }
       const newRecord = normalizeRecord(itemData, tab);
-      const updated = [newRecord, ...items];
-      saveItems(tab, updated);
+      const currentItems = getItems(tab);
+      const updated = [newRecord, ...currentItems.filter((i) => i.id !== newRecord.id)];
+      const saved = saveItems(tab, updated);
+      if (!saved) {
+        throw new Error('Unable to write to localStorage. Please check browser storage permissions.');
+      }
       setItemsState(updated);
       return newRecord;
     },
-    [tab, items]
+    [tab]
   );
 
   // Update an existing opportunity by ID
