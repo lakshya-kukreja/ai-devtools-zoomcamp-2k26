@@ -39,6 +39,8 @@ export default function OpportunityModal({
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [errors, setErrors] = useState({});
   const companyInputRef = useRef(null);
+  const modalRef = useRef(null);
+  const previousActiveElementRef = useRef(null);
 
   const isInternships = tab === 'internships';
   const isEditing = Boolean(initialData);
@@ -75,13 +77,54 @@ export default function OpportunityModal({
     }
   }, [isOpen, initialData, tab]);
 
-  // Handle ESC key press to dismiss modal
+  // Handle ESC key press, TAB focus trapping, and restore focus on close (TASK-09)
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      if (previousActiveElementRef.current && typeof previousActiveElementRef.current.focus === 'function') {
+        previousActiveElementRef.current.focus();
+        previousActiveElementRef.current = null;
+      }
+      return;
+    }
+
+    if (typeof document !== 'undefined') {
+      previousActiveElementRef.current = document.activeElement;
+    }
 
     const handleKeyDown = (e) => {
+      // Escape closes open modal
       if (e.key === 'Escape') {
+        e.preventDefault();
         onClose();
+        return;
+      }
+
+      // Tab key focus trapping for keyboard ergonomics
+      if (e.key === 'Tab') {
+        const modalEl = modalRef.current;
+        if (!modalEl) return;
+
+        const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        const focusableElements = Array.from(modalEl.querySelectorAll(focusableSelectors)).filter(
+          (el) => !el.disabled && el.offsetParent !== null
+        );
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
       }
     };
 
@@ -167,6 +210,7 @@ export default function OpportunityModal({
       role="presentation"
     >
       <div
+        ref={modalRef}
         className="modal-window"
         role="dialog"
         aria-modal="true"

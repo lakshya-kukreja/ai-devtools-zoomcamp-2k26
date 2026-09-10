@@ -801,36 +801,71 @@ html, body {
   }
 }
 
-/* Spreadsheet Table Styling (Tokens & Base CSS) */
+/* Spreadsheet Table Styling (Tokens & Base CSS - TASK-09) */
 .table-container {
   width: 100%;
+  max-height: 60vh;
+  min-height: 240px;
   overflow-x: auto;
+  overflow-y: auto;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--bg-surface);
+  position: relative;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Polished Dark Scrollbars for Spreadsheet View */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: var(--radius-sm);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .spreadsheet-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   text-align: left;
   font-size: 0.825rem;
   white-space: nowrap;
 }
 
+.spreadsheet-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
 .spreadsheet-table th {
-  background: var(--bg-surface-elevated);
+  background-color: #243248;
+  background-color: var(--bg-surface-elevated);
   color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 0.65rem 0.85rem;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 2px solid var(--border-subtle);
   border-right: 1px solid rgba(51, 65, 85, 0.4);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
+  box-shadow: 0 1px 0 var(--border-subtle);
 }
 
 .spreadsheet-table th:last-child {
@@ -838,10 +873,11 @@ html, body {
 }
 
 .spreadsheet-table td {
-  padding: 0.65rem 0.85rem;
+  padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border-subtle);
   border-right: 1px solid rgba(51, 65, 85, 0.4);
   color: var(--text-primary);
+  vertical-align: middle;
 }
 
 .spreadsheet-table td:last-child {
@@ -853,8 +889,24 @@ html, body {
 }
 
 .spreadsheet-table tr:hover td {
-  background-color: rgba(99, 102, 241, 0.06);
+  background-color: rgba(99, 102, 241, 0.08);
 }
+
+/* Column Header Min-Widths for Stable Ergonomic Grid */
+.th-index { min-width: 45px; }
+.th-company { min-width: 160px; }
+.th-deadline { min-width: 110px; }
+.th-mode { min-width: 110px; }
+.th-eligibility { min-width: 170px; }
+.th-roles { min-width: 160px; }
+.th-stipend { min-width: 130px; }
+.th-ppo { min-width: 160px; }
+.th-ctc { min-width: 120px; }
+.th-scale { min-width: 120px; }
+.th-careers { min-width: 130px; }
+.th-chance { min-width: 150px; }
+.th-status { min-width: 130px; }
+.th-actions { min-width: 130px; }
 
 /* Conditional Column Header Accents */
 .col-conditional-internship {
@@ -865,20 +917,51 @@ html, body {
   color: #34d399 !important;
 }
 
+/* Long Text Truncation & Ellipsis (TASK-09) */
+.cell-truncate {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Table Specific Cells */
 .company-cell {
   font-weight: 600;
   color: #ffffff;
+  max-width: 180px;
 }
 
-.stipend-cell,
+.deadline-cell {
+  max-width: 120px;
+}
+
+.roles-cell {
+  max-width: 220px;
+}
+
+.stipend-cell {
+  color: #e0f2fe;
+  max-width: 140px;
+}
+
 .ppo-cell {
   color: #e0f2fe;
+  max-width: 200px;
 }
 
 .ctc-cell {
   color: #d1fae5;
   font-weight: 600;
+  max-width: 140px;
+}
+
+.careers-cell {
+  max-width: 140px;
+}
+
+.scale-cell {
+  max-width: 120px;
 }
 
 /* External Link in Table */
@@ -1437,3 +1520,10 @@ html, body {
     padding: 1rem;
   }
 }
+
+/* Accessibility & Keyboard Navigation (TASK-09) */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+

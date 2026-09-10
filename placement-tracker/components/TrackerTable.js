@@ -19,27 +19,36 @@
 
 /**
  * Safely format an external URL, preventing javascript:/data: protocol injection
- * and ensuring standard https:// protocol.
+ * and ensuring standard https:// or http:// protocol with noopener/noreferrer.
  *
  * @param {string} rawUrl
  * @returns {string|null}
  */
-function sanitizeUrl(rawUrl) {
+export function sanitizeUrl(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
   const trimmed = rawUrl.trim();
-  if (!trimmed) return null;
+  if (!trimmed || trimmed === 'https://' || trimmed === 'http://') return null;
 
   // Disallow potentially dangerous protocols
-  if (/^(javascript:|data:|vbscript:)/i.test(trimmed)) {
+  if (/^(javascript:|data:|vbscript:|file:)/i.test(trimmed)) {
     return null;
   }
 
-  // Auto-prepend https:// if protocol is missing
-  if (!/^https?:\/\//i.test(trimmed)) {
-    return `https://${trimmed}`;
+  // Prepend https:// if protocol is missing
+  let formatted = trimmed;
+  if (!/^https?:\/\//i.test(formatted)) {
+    formatted = `https://${formatted}`;
   }
 
-  return trimmed;
+  try {
+    const parsed = new URL(formatted);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -155,25 +164,25 @@ export default function TrackerTable({
       <table className="spreadsheet-table">
         <thead>
           <tr>
-            <th style={{ width: '45px', textAlign: 'center' }}>#</th>
-            <th>Company Name</th>
-            <th>Deadline</th>
-            <th>Mode</th>
-            <th>MSc Physics Eligibility</th>
-            <th>Roles</th>
+            <th className="th-index" style={{ width: '45px', textAlign: 'center' }}>#</th>
+            <th className="th-company">Company Name</th>
+            <th className="th-deadline">Deadline</th>
+            <th className="th-mode">Mode</th>
+            <th className="th-eligibility">MSc Physics Eligibility</th>
+            <th className="th-roles">Roles</th>
             {isInternships ? (
               <>
-                <th className="col-conditional-internship">Stipend</th>
-                <th className="col-conditional-internship">PPO Info</th>
+                <th className="th-stipend col-conditional-internship">Stipend</th>
+                <th className="th-ppo col-conditional-internship">PPO Info</th>
               </>
             ) : (
-              <th className="col-conditional-placement">CTC</th>
+              <th className="th-ctc col-conditional-placement">CTC</th>
             )}
-            <th>Company Scale</th>
-            <th>Careers URL</th>
-            <th>Chance</th>
-            <th>Status</th>
-            <th style={{ textAlign: 'center', width: '130px' }}>Actions</th>
+            <th className="th-scale">Company Scale</th>
+            <th className="th-careers">Careers URL</th>
+            <th className="th-chance">Chance</th>
+            <th className="th-status">Status</th>
+            <th className="th-actions" style={{ textAlign: 'center', width: '130px' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -221,53 +230,60 @@ export default function TrackerTable({
                   </td>
 
                   {/* Company Name */}
-                  <td className="company-cell" title={item.companyName || ''}>
+                  <td className="company-cell cell-truncate" title={item.companyName || ''}>
                     {item.companyName || <span className="text-muted">—</span>}
                   </td>
 
                   {/* Deadline */}
-                  <td>{item.deadline || <span className="text-muted">—</span>}</td>
+                  <td className="deadline-cell cell-truncate" title={item.deadline || ''}>
+                    {item.deadline || <span className="text-muted">—</span>}
+                  </td>
 
                   {/* Drive Mode */}
-                  <td>
-                    <span className={getModePillClass(item.mode)}>
+                  <td className="mode-cell">
+                    <span className={getModePillClass(item.mode)} title={`Mode: ${item.mode || 'On-Campus'}`}>
                       {item.mode || 'On-Campus'}
                     </span>
                   </td>
 
                   {/* MSc Physics Eligibility */}
-                  <td>
-                    <span className={`badge ${getEligibilityBadgeClass(item.mscPhysicsEligibility)}`}>
+                  <td className="eligibility-cell">
+                    <span
+                      className={`badge ${getEligibilityBadgeClass(item.mscPhysicsEligibility)}`}
+                      title={`MSc Physics Eligibility: ${item.mscPhysicsEligibility || 'Check Needed'}`}
+                    >
                       {item.mscPhysicsEligibility || 'Check Needed'}
                     </span>
                   </td>
 
                   {/* Roles */}
-                  <td title={item.roles || ''}>
+                  <td className="roles-cell cell-truncate" title={item.roles || ''}>
                     {item.roles || <span className="text-muted">—</span>}
                   </td>
 
                   {/* Conditional Columns: Internships (Stipend & PPO) vs Placements (CTC) */}
                   {isInternships ? (
                     <>
-                      <td className="stipend-cell" title={item.stipend || ''}>
+                      <td className="stipend-cell cell-truncate" title={item.stipend || ''}>
                         {item.stipend || <span className="text-muted">—</span>}
                       </td>
-                      <td className="ppo-cell" title={item.ppoInfo || ''}>
+                      <td className="ppo-cell cell-truncate" title={item.ppoInfo || ''}>
                         {item.ppoInfo || <span className="text-muted">—</span>}
                       </td>
                     </>
                   ) : (
-                    <td className="ctc-cell" title={item.ctc || ''}>
+                    <td className="ctc-cell cell-truncate" title={item.ctc || ''}>
                       {item.ctc || <span className="text-muted">—</span>}
                     </td>
                   )}
 
                   {/* Company Scale */}
-                  <td>{item.companyScale || <span className="text-muted">—</span>}</td>
+                  <td className="scale-cell cell-truncate" title={item.companyScale || ''}>
+                    {item.companyScale || <span className="text-muted">—</span>}
+                  </td>
 
                   {/* Careers URL */}
-                  <td>
+                  <td className="careers-cell cell-truncate">
                     {safeUrl ? (
                       <a
                         href={safeUrl}
@@ -275,6 +291,7 @@ export default function TrackerTable({
                         rel="noopener noreferrer"
                         className="table-link"
                         title={safeUrl}
+                        aria-label={`Open careers link for ${item.companyName || 'opportunity'}`}
                       >
                         Apply / Portal ↗
                       </a>
@@ -284,15 +301,21 @@ export default function TrackerTable({
                   </td>
 
                   {/* Chance */}
-                  <td>
-                    <span className={`badge ${getChanceBadgeClass(item.chance)}`}>
+                  <td className="chance-cell">
+                    <span
+                      className={`badge ${getChanceBadgeClass(item.chance)}`}
+                      title={`Recruitment Chance: ${item.chance || 'Yellow'}`}
+                    >
                       {getChanceBadgeLabel(item.chance)}
                     </span>
                   </td>
 
                   {/* Status */}
-                  <td>
-                    <span className={`badge ${getStatusBadgeClass(item.status)}`}>
+                  <td className="status-cell">
+                    <span
+                      className={`badge ${getStatusBadgeClass(item.status)}`}
+                      title={`Application Status: ${item.status || 'Not Applied'}`}
+                    >
                       {item.status || 'Not Applied'}
                     </span>
                   </td>

@@ -232,8 +232,8 @@
     - `Esc` key closes open modal.
     - `Enter` inside form submits.
 - **Acceptance Criteria**:
-  - [ ] Table headers remain locked at top during vertical scrolling.
-  - [ ] Table handles dense content with smooth horizontal scroll and clear cell borders.
-  - [ ] External links open safely in a new tab (`rel="noopener noreferrer"`).
-  - [ ] Modal dialog closes on `Esc` key press and supports keyboard navigation.
-  - [ ] Entire interface delivers a polished spreadsheet feel matching SPEC.md Section 6.
+  - [x] Table headers remain locked at top during vertical scrolling.
+  - [x] Table handles dense content with smooth horizontal scroll and clear cell borders.
+  - [x] External links open safely in a new tab (`rel="noopener noreferrer"`).
+  - [x] Modal dialog closes on `Esc` key press and supports keyboard navigation.
+  - [x] Entire interface delivers a polished spreadsheet feel matching SPEC.md Section 6.
